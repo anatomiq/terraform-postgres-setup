@@ -18,7 +18,6 @@ To destroy this example execute:
 $ terraform destroy
 ```
 
-
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
