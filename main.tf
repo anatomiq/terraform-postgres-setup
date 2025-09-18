@@ -26,10 +26,11 @@ resource "random_password" "passwords" {
 resource "postgresql_role" "default" {
   for_each = var.users
 
-  name     = each.key
-  login    = lookup(each.value, "password", false) == true ? true : false
-  password = lookup(each.value, "password", false) == true ? random_password.passwords[each.key].result : each.value.password
-  roles    = each.value.grant_roles
+  name                = each.key
+  login               = lookup(each.value, "login", true)
+  password_wo         = lookup(each.value, "password", false) ? random_password.passwords[each.key].result : null
+  password_wo_version = lookup(each.value, "password", false) ? lookup(each.value, "password_version", 1) : null
+  roles               = each.value.grant_roles
 }
 
 #===============================================================
