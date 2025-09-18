@@ -1,7 +1,9 @@
 variable "users" {
   description = "Set of users/roles to create"
   type = map(object({
+    login                           = optional(bool, true)
     password                        = optional(bool, true)
+    password_version                = optional(number, 1)
     grant_roles                     = optional(list(string), [])
     grant_privileges_on_database    = list(string)
     grant_privileges_on_schema      = list(string)

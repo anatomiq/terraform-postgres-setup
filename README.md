@@ -45,13 +45,13 @@ gh release create v1.0.0 \
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.12.2 |
-| <a name="requirement_postgresql"></a> [postgresql](#requirement\_postgresql) | 1.25.0 |
+| <a name="requirement_postgresql"></a> [postgresql](#requirement\_postgresql) | 1.26.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_postgresql"></a> [postgresql](#provider\_postgresql) | 1.25.0 |
+| <a name="provider_postgresql"></a> [postgresql](#provider\_postgresql) | 1.26.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
@@ -62,14 +62,14 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [postgresql_database.database](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/database) | resource |
-| [postgresql_default_privileges.default_sequences](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/default_privileges) | resource |
-| [postgresql_default_privileges.default_tables](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/default_privileges) | resource |
-| [postgresql_grant.database](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/grant) | resource |
-| [postgresql_grant.schema](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/grant) | resource |
-| [postgresql_grant.sequences](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/grant) | resource |
-| [postgresql_grant.tables](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/grant) | resource |
-| [postgresql_role.default](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.25.0/docs/resources/role) | resource |
+| [postgresql_database.database](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/database) | resource |
+| [postgresql_default_privileges.default_sequences](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/default_privileges) | resource |
+| [postgresql_default_privileges.default_tables](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/default_privileges) | resource |
+| [postgresql_grant.database](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
+| [postgresql_grant.schema](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
+| [postgresql_grant.sequences](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
+| [postgresql_grant.tables](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
+| [postgresql_role.default](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/role) | resource |
 | [random_password.passwords](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 
 ## Inputs
@@ -78,7 +78,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_database"></a> [database](#input\_database) | Set of databases to create | <pre>object({<br/>    name                   = string<br/>    template               = optional(string, "template0")<br/>    lc_collate             = optional(string, "en_US.UTF-8")<br/>    connection_limit       = optional(number, -1)<br/>    allow_connections      = optional(bool, true)<br/>    alter_object_ownership = optional(bool, false)<br/>  })</pre> | n/a | yes |
 | <a name="input_passwords_parameters"></a> [passwords\_parameters](#input\_passwords\_parameters) | Parameters for random passwords | <pre>object({<br/>    length  = number<br/>    special = bool<br/>  })</pre> | n/a | yes |
-| <a name="input_users"></a> [users](#input\_users) | Set of users/roles to create | <pre>map(object({<br/>    password                        = optional(bool, true)<br/>    grant_roles                     = optional(list(string), [])<br/>    grant_privileges_on_database    = list(string)<br/>    grant_privileges_on_schema      = list(string)<br/>    grant_privileges_on_tables      = list(string)<br/>    tables                          = optional(list(string), [])<br/>    grant_privileges_on_sequences   = list(string)<br/>    sequences                       = optional(list(string), [])<br/>    set_default_privileges          = optional(bool, false)<br/>    default_privileges_on_tables    = optional(list(string), [])<br/>    default_privileges_on_sequences = optional(list(string), [])<br/>    schema                          = optional(string, "public")<br/>    objects_owner_user              = optional(string, "postgres")<br/>  }))</pre> | n/a | yes |
+| <a name="input_users"></a> [users](#input\_users) | Set of users/roles to create | <pre>map(object({<br/>    login                           = optional(bool, true)<br/>    password                        = optional(bool, true)<br/>    password_version                = optional(number, 1)<br/>    grant_roles                     = optional(list(string), [])<br/>    grant_privileges_on_database    = list(string)<br/>    grant_privileges_on_schema      = list(string)<br/>    grant_privileges_on_tables      = list(string)<br/>    tables                          = optional(list(string), [])<br/>    grant_privileges_on_sequences   = list(string)<br/>    sequences                       = optional(list(string), [])<br/>    set_default_privileges          = optional(bool, false)<br/>    default_privileges_on_tables    = optional(list(string), [])<br/>    default_privileges_on_sequences = optional(list(string), [])<br/>    schema                          = optional(string, "public")<br/>    objects_owner_user              = optional(string, "postgres")<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 
