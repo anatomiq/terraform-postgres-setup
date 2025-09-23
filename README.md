@@ -3,6 +3,39 @@
 Configuration in this directory creates PostgreSQL databases, roles with random passwords and its permissions.
 
 ## Usage
+To use this module, you need to include it in your Terraform configuration. You can do this by adding the following to your `main.tf` file:
+
+```hcl
+module "[module_name]" {
+  source = [module_version]
+  passwords_parameters = {
+    length  = 21
+    special = false
+  }
+
+  databases = {
+    adventure = {}
+    journey   = {}
+  }
+
+  roles = {
+    "bill" = {
+      database_access               = ["adventure"]
+      grant_privileges_on_database  = ["CONNECT", "CREATE"]
+      grant_privileges_on_schema    = ["USAGE", "CREATE"]
+      grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
+      grant_privileges_on_sequences = ["USAGE", "SELECT"]
+    }
+    "ted" = {
+      database_access               = ["adventure", "journey"]
+      grant_privileges_on_database  = ["CONNECT", "CREATE"]
+      grant_privileges_on_schema    = ["USAGE", "CREATE"]
+      grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
+      grant_privileges_on_sequences = ["USAGE", "SELECT"]
+    }
+  }
+}
+```
 
 To run this example execute:
 
@@ -18,26 +51,9 @@ To destroy this example execute:
 $ terraform destroy
 ```
 
-# Creating a Release Tag for the Terraform Module
+## Examples
 
-To create a versioned release and push it to GitHub:
-
-```bash
-# 1. Make sure all changes are committed
-git add .
-git commit -m "feat: initial implementation of module"
-
-# 2. Create a version tag (e.g., v1.0.0)
-git tag -a v1.0.0 -m "Initial stable release"
-
-# 3. Push the tag to GitHub
-git push origin v1.0.0
-
-# 4. Create a GitHub release for the tag (optional, via CLI)
-gh release create v1.0.0 \
-  --title "v1.0.0" \
-  --notes "Initial stable release of the Terraform module"
-```
+- [Complete](https://github.com/anatomiq/terraform-postgres-setup/tree/main/examples/aws)
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -90,3 +106,6 @@ No modules.
 | <a name="output_role_databases"></a> [role\_databases](#output\_role\_databases) | Databases list per role |
 | <a name="output_role_passwords"></a> [role\_passwords](#output\_role\_passwords) | The passwords for each role |
 <!-- END_TF_DOCS -->
+
+## License
+Apache 2 Licensed. See [LICENSE](https://github.com/anatomiq/terraform-postgres-setup/blob/main/LICENSE) for full details.
