@@ -19,7 +19,7 @@ module "postgres_setup" {
       grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
       grant_privileges_on_sequences = ["USAGE", "SELECT"]
     }
-    "tedd" = {
+    "ted" = {
       database_access               = ["adventure", "journey"]
       grant_privileges_on_database  = ["CONNECT", "CREATE"]
       grant_privileges_on_schema    = ["USAGE", "CREATE"]

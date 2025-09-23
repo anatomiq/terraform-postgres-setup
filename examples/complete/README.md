@@ -54,3 +54,6 @@ No resources.
 
 No outputs.
 <!-- END_TF_DOCS -->
+
+## License
+Apache 2 Licensed. See [LICENSE](https://github.com/anatomiq/terraform-postgres-setup/blob/main/LICENSE) for full details.
