@@ -1,10 +1,11 @@
-variable "users" {
-  description = "Set of users/roles to create"
+variable "roles" {
+  description = "Set of roles to create; each can target one or more databases"
   type = map(object({
     login                           = optional(bool, true)
     password                        = optional(bool, true)
     password_version                = optional(number, 1)
     grant_roles                     = optional(list(string), [])
+    database_access                 = list(string)
     grant_privileges_on_database    = list(string)
     grant_privileges_on_schema      = list(string)
     grant_privileges_on_tables      = list(string)
@@ -19,16 +20,16 @@ variable "users" {
   }))
 }
 
-variable "database" {
-  description = "Set of databases to create"
-  type = object({
-    name                   = string
+variable "databases" {
+  description = "Databases to create (key is database name). If empty, no DBs are created."
+  type = map(object({
     template               = optional(string, "template0")
     lc_collate             = optional(string, "en_US.UTF-8")
     connection_limit       = optional(number, -1)
     allow_connections      = optional(bool, true)
     alter_object_ownership = optional(bool, false)
-  })
+  }))
+  default = {}
 }
 
 variable "passwords_parameters" {
@@ -37,4 +38,26 @@ variable "passwords_parameters" {
     length  = number
     special = bool
   })
+  default = {
+    length  = 21
+    special = true
+  }
+}
+
+variable "external_passwords" {
+  description = "If true, do not generate passwords; expect provided_passwords map"
+  type        = bool
+  default     = false
+}
+
+variable "ephemeral_passwords" {
+  description = "If true, generate ephemeral_password instead of random_password"
+  type        = bool
+  default     = false
+}
+
+variable "provided_passwords" {
+  description = "Optional map of user => password when external_passwords is true"
+  type        = map(string)
+  default     = {}
 }
