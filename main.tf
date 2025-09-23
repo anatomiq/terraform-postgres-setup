@@ -8,10 +8,6 @@ resource "postgresql_database" "database" {
   connection_limit       = each.value.connection_limit
   allow_connections      = each.value.allow_connections
   alter_object_ownership = each.value.alter_object_ownership
-
-  depends_on = [
-    postgresql_role.default
-  ]
 }
 
 #===============================================================
