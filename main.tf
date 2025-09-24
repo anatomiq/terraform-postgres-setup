@@ -13,17 +13,27 @@ resource "postgresql_database" "database" {
 #===============================================================
 # Generate Random Passwords for local users (unless external passwords)
 resource "random_password" "passwords" {
-  for_each         = { for k, v in var.roles : k => v if(lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false) }
-  length           = var.passwords_parameters.length
-  special          = var.passwords_parameters.special
-  override_special = var.passwords_parameters.override_special
+  for_each = {
+    for k, v in var.roles :
+    k => v
+    if lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false
+  }
+
+  length           = lookup(each.value, "password_length", var.passwords_parameters.length)
+  special          = lookup(each.value, "password_special", var.passwords_parameters.special)
+  override_special = lookup(each.value, "override_special", var.passwords_parameters.override_special)
 }
 
 ephemeral "random_password" "password" {
-  for_each         = { for k, v in var.roles : k => v if(lookup(v, "password", true) == true && var.external_passwords == false) }
-  length           = var.passwords_parameters.length
-  special          = var.passwords_parameters.special
-  override_special = var.passwords_parameters.override_special
+  for_each = {
+    for k, v in var.roles :
+    k => v
+    if lookup(v, "password", true) == true && var.external_passwords == false
+  }
+
+  length           = lookup(each.value, "password_length", var.passwords_parameters.length)
+  special          = lookup(each.value, "password_special", var.passwords_parameters.special)
+  override_special = lookup(each.value, "override_special", var.passwords_parameters.override_special)
 }
 
 #===============================================================
