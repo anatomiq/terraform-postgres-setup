@@ -19,9 +19,9 @@ resource "random_password" "passwords" {
     if lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false
   }
 
-  length           = lookup(each.value, "password_length", var.passwords_parameters.length)
-  special          = lookup(each.value, "password_special", var.passwords_parameters.special)
-  override_special = lookup(each.value, "override_special", var.passwords_parameters.override_special)
+  length           = coalesce(each.value.password_length, var.passwords_parameters.length)
+  special          = coalesce(each.value.password_special, var.passwords_parameters.special)
+  override_special = coalesce(each.value.password_override_special, var.passwords_parameters.override_special)
 }
 
 ephemeral "random_password" "password" {
@@ -31,9 +31,9 @@ ephemeral "random_password" "password" {
     if lookup(v, "password", true) == true && var.external_passwords == false
   }
 
-  length           = lookup(each.value, "password_length", var.passwords_parameters.length)
-  special          = lookup(each.value, "password_special", var.passwords_parameters.special)
-  override_special = lookup(each.value, "override_special", var.passwords_parameters.override_special)
+  length           = coalesce(each.value.password_length, var.passwords_parameters.length)
+  special          = coalesce(each.value.password_special, var.passwords_parameters.special)
+  override_special = coalesce(each.value.password_override_special, var.passwords_parameters.override_special)
 }
 
 #===============================================================
