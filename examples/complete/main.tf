@@ -27,7 +27,6 @@ module "postgres_setup" {
       grant_privileges_on_sequences = ["USAGE", "SELECT"]
       password_length               = 16
       password_special              = true
-      password_override_special     = "&^%$"
     }
   }
 }
