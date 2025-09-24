@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.3...v1.0.4) (2025-09-24)
+
+
+### Bug Fixes
+
+* use lookup instead of try ([598a9ba](https://github.com/anatomiq/terraform-postgres-setup/commit/598a9bac9c2bcc36b4b0d376a8871273bffb4286))
+
 ## [1.0.3](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.2...v1.0.3) (2025-09-24)
 
 
