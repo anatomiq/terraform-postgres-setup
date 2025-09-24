@@ -7,6 +7,13 @@ variable "roles" {
     password_length                 = optional(number)
     password_special                = optional(bool)
     password_override_special       = optional(string)
+    password_lower                  = optional(bool)
+    password_min_lower              = optional(number)
+    password_numeric                = optional(bool)
+    password_min_numeric            = optional(number)
+    password_upper                  = optional(bool)
+    password_min_upper              = optional(number)
+    password_min_special            = optional(number)
     grant_roles                     = optional(list(string), [])
     database_access                 = list(string)
     grant_privileges_on_database    = list(string)
@@ -41,12 +48,27 @@ variable "passwords_parameters" {
     length           = number
     special          = bool
     override_special = optional(string)
+    lower            = optional(bool, true)
+    min_lower        = optional(number, 0)
+    numeric          = optional(bool, true)
+    min_numeric      = optional(number, 0)
+    upper            = optional(bool, true)
+    min_upper        = optional(number, 0)
+    min_special      = optional(number, 0)
   })
   default = {
-    length  = 21
-    special = true
+    length      = 21
+    special     = true
+    lower       = true
+    min_lower   = 0
+    numeric     = true
+    min_numeric = 0
+    upper       = true
+    min_upper   = 0
+    min_special = 0
   }
 }
+
 
 variable "external_passwords" {
   description = "If true, do not generate passwords; expect provided_passwords map"
