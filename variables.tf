@@ -35,8 +35,9 @@ variable "databases" {
 variable "passwords_parameters" {
   description = "Parameters for random passwords"
   type = object({
-    length  = number
-    special = bool
+    length           = number
+    special          = bool
+    override_special = optional(string)
   })
   default = {
     length  = 21

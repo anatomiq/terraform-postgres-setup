@@ -48,7 +48,6 @@ No resources.
 | <a name="input_database_password"></a> [database\_password](#input\_database\_password) | PostgreSQL database connection password to create resources in | `string` | n/a | yes |
 | <a name="input_database_port"></a> [database\_port](#input\_database\_port) | PostgreSQL database connection port to create resources in | `string` | `5342` | no |
 | <a name="input_database_username"></a> [database\_username](#input\_database\_username) | PostgreSQL database connection username to create resources in | `string` | n/a | yes |
-| <a name="input_passwords_parameters"></a> [passwords\_parameters](#input\_passwords\_parameters) | Parameters for random passwords | <pre>object({<br/>    length  = number<br/>    special = bool<br/>  })</pre> | <pre>{<br/>  "length": 21,<br/>  "special": false<br/>}</pre> | no |
 
 ## Outputs
 
