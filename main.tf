@@ -19,8 +19,8 @@ resource "random_password" "passwords" {
     if lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false
   }
 
-  length  = try(each.value.password_length, var.passwords_parameters.length, 16)
-  special = try(each.value.password_special, var.passwords_parameters.special, false)
+  length  = coalesce(each.value.password_length, var.passwords_parameters.length, 16)
+  special = coalesce(each.value.password_special, var.passwords_parameters.special, false)
 }
 
 ephemeral "random_password" "password" {
@@ -30,8 +30,8 @@ ephemeral "random_password" "password" {
     if lookup(v, "password", true) == true && var.external_passwords == false
   }
 
-  length  = try(each.value.password_length, var.passwords_parameters.length, 16)
-  special = try(each.value.password_special, var.passwords_parameters.special, false)
+  length  = coalesce(each.value.password_length, var.passwords_parameters.length, 16)
+  special = coalesce(each.value.password_special, var.passwords_parameters.special, false)
 }
 
 #===============================================================
