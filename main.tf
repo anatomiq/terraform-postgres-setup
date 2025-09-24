@@ -18,7 +18,6 @@ resource "random_password" "passwords" {
     k => v
     if lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false
   }
-
   length  = lookup(each.value, "password_length", var.passwords_parameters.length)
   special = lookup(each.value, "password_special", var.passwords_parameters.special)
 }
@@ -29,7 +28,6 @@ ephemeral "random_password" "password" {
     k => v
     if lookup(v, "password", true) == true && var.external_passwords == false
   }
-
   length  = lookup(each.value, "password_length", var.passwords_parameters.length)
   special = lookup(each.value, "password_special", var.passwords_parameters.special)
 }
