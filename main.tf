@@ -19,16 +19,8 @@ resource "random_password" "passwords" {
     if lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false
   }
 
-  length           = try(each.value.password_length, var.passwords_parameters.length, 1)
-  special          = try(each.value.password_special, var.passwords_parameters.special, true)
-  upper            = try(each.value.password_upper, var.passwords_parameters.upper, true)
-  lower            = try(each.value.password_lower, var.passwords_parameters.lower, true)
-  numeric          = try(each.value.password_numeric, var.passwords_parameters.numeric, true)
-  min_upper        = try(each.value.password_min_upper, var.passwords_parameters.min_upper, 0)
-  min_lower        = try(each.value.password_min_lower, var.passwords_parameters.min_lower, 0)
-  min_numeric      = try(each.value.password_min_numeric, var.passwords_parameters.min_numeric, 0)
-  min_special      = try(each.value.password_min_special, var.passwords_parameters.min_special, 0)
-  override_special = try(each.value.password_override_special, var.passwords_parameters.override_special, null)
+  length  = try(each.value.password_length, var.passwords_parameters.length, 16)
+  special = try(each.value.password_special, var.passwords_parameters.special, false)
 }
 
 ephemeral "random_password" "password" {
@@ -38,16 +30,8 @@ ephemeral "random_password" "password" {
     if lookup(v, "password", true) == true && var.external_passwords == false
   }
 
-  length           = try(each.value.password_length, var.passwords_parameters.length, 1)
-  special          = try(each.value.password_special, var.passwords_parameters.special, true)
-  upper            = try(each.value.password_upper, var.passwords_parameters.upper, true)
-  lower            = try(each.value.password_lower, var.passwords_parameters.lower, true)
-  numeric          = try(each.value.password_numeric, var.passwords_parameters.numeric, true)
-  min_upper        = try(each.value.password_min_upper, var.passwords_parameters.min_upper, 0)
-  min_lower        = try(each.value.password_min_lower, var.passwords_parameters.min_lower, 0)
-  min_numeric      = try(each.value.password_min_numeric, var.passwords_parameters.min_numeric, 0)
-  min_special      = try(each.value.password_min_special, var.passwords_parameters.min_special, 0)
-  override_special = try(each.value.password_override_special, var.passwords_parameters.override_special, null)
+  length  = try(each.value.password_length, var.passwords_parameters.length, 16)
+  special = try(each.value.password_special, var.passwords_parameters.special, false)
 }
 
 #===============================================================
