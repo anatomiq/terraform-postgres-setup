@@ -18,18 +18,20 @@ resource "random_password" "passwords" {
     k => v
     if lookup(v, "password", true) == true && var.external_passwords == false && var.ephemeral_passwords == false
   }
-  length  = lookup(each.value, "password_length", var.passwords_parameters.length)
-  special = lookup(each.value, "password_special", var.passwords_parameters.special)
+
+  length  = var.passwords_parameters.length
+  special = var.passwords_parameters.special
 }
 
-ephemeral "random_password" "password" {
+ephemeral "random_password" "passwords" {
   for_each = {
     for k, v in var.roles :
     k => v
     if lookup(v, "password", true) == true && var.external_passwords == false
   }
-  length  = lookup(each.value, "password_length", var.passwords_parameters.length)
-  special = lookup(each.value, "password_special", var.passwords_parameters.special)
+
+  length  = var.passwords_parameters.length
+  special = var.passwords_parameters.special
 }
 
 #===============================================================
@@ -41,7 +43,7 @@ resource "postgresql_role" "default" {
   login = lookup(each.value, "login", true)
   password_wo = lookup(each.value, "password", true) ? (
     var.external_passwords ? lookup(var.provided_passwords, each.key, null) : (
-      var.ephemeral_passwords ? ephemeral.random_password.password[each.key].result : random_password.passwords[each.key].result
+      var.ephemeral_passwords ? ephemeral.random_password.passwords[each.key].result : random_password.passwords[each.key].result
     )
   ) : null
   password_wo_version = lookup(each.value, "password", true) ? lookup(each.value, "password_version", 1) : null

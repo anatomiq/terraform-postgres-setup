@@ -4,8 +4,6 @@ variable "roles" {
     login                           = optional(bool, true)
     password                        = optional(bool, true)
     password_version                = optional(number, 1)
-    password_length                 = optional(number)
-    password_special                = optional(bool)
     grant_roles                     = optional(list(string), [])
     database_access                 = list(string)
     grant_privileges_on_database    = list(string)
