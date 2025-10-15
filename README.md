@@ -3,6 +3,7 @@
 Configuration in this directory creates PostgreSQL databases, roles with random passwords and its permissions.
 
 ## Usage
+
 To use this module, you need to include it in your Terraform configuration. You can do this by adding the following to your `main.tf` file:
 
 ```hcl
@@ -60,7 +61,7 @@ $ terraform destroy
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.12.2 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.12.2 |
 | <a name="requirement_postgresql"></a> [postgresql](#requirement\_postgresql) | 1.26.0 |
 
 ## Providers
