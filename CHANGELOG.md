@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.3...v1.0.4) (2025-10-15)
+
+
+### Bug Fixes
+
+* update terraform version ([3d9dda2](https://github.com/anatomiq/terraform-postgres-setup/commit/3d9dda292b3846b31713344afa4be44eb60a5989))
+
 ## [1.0.3](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.2...v1.0.3) (2025-09-25)
 
 
