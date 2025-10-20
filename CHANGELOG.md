@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.4...v1.0.5) (2025-10-20)
+
+
+### Bug Fixes
+
+* adding extensions block ([2ec71a0](https://github.com/anatomiq/terraform-postgres-setup/commit/2ec71a054dc5e75500b6788b7638312d658a455d))
+
 ## [1.0.4](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.3...v1.0.4) (2025-10-15)
 
 
