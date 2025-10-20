@@ -11,6 +11,31 @@ resource "postgresql_database" "database" {
 }
 
 #===============================================================
+# Create PostgreSQL Extensions per Database
+resource "postgresql_extension" "extensions" {
+  for_each = {
+    for pair in flatten([
+      for ext_name, ext_conf in var.extensions : [
+        for db_name in ext_conf.databases : {
+          ext_name = ext_name
+          db_name  = db_name
+          conf     = ext_conf
+        }
+      ]
+    ]) : "${pair.db_name}_${pair.ext_name}" => pair
+  }
+
+  name           = each.value.ext_name
+  database       = each.value.db_name
+  schema         = lookup(each.value.conf, "schema", null)
+  version        = lookup(each.value.conf, "version", null)
+  drop_cascade   = lookup(each.value.conf, "drop_cascade", false)
+  create_cascade = lookup(each.value.conf, "create_cascade", false)
+
+  depends_on = [postgresql_database.database]
+}
+
+#===============================================================
 # Generate Random Passwords for local users (unless external passwords)
 resource "random_password" "passwords" {
   for_each = {

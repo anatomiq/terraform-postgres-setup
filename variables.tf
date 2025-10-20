@@ -32,6 +32,18 @@ variable "databases" {
   default = {}
 }
 
+variable "extensions" {
+  description = "PostgreSQL extensions to create, with target databases"
+  type = map(object({
+    databases      = list(string)
+    schema         = optional(string)
+    version        = optional(string)
+    drop_cascade   = optional(bool, false)
+    create_cascade = optional(bool, false)
+  }))
+  default = {}
+}
+
 variable "passwords_parameters" {
   description = "Parameters for random passwords"
   type = object({
@@ -43,7 +55,6 @@ variable "passwords_parameters" {
     special = false
   }
 }
-
 
 variable "external_passwords" {
   description = "If true, do not generate passwords; expect provided_passwords map"

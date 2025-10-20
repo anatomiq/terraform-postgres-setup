@@ -19,6 +19,17 @@ module "[module_name]" {
     journey   = {}
   }
 
+  extensions = {
+    "uuid-ossp" = {
+      databases = ["adventure"]
+    }
+    "pgcrypto" = {
+      databases       = ["journey"]
+      schema          = "public"
+      create_cascade  = true
+    }
+  }
+
   roles = {
     "bill" = {
       database_access               = ["adventure"]
@@ -82,6 +93,7 @@ No modules.
 | [postgresql_database.database](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/database) | resource |
 | [postgresql_default_privileges.default_sequences](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/default_privileges) | resource |
 | [postgresql_default_privileges.default_tables](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/default_privileges) | resource |
+| [postgresql_extension.extensions](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/extension) | resource |
 | [postgresql_grant.database](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
 | [postgresql_grant.schema](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
 | [postgresql_grant.sequences](https://registry.terraform.io/providers/cyrilgdn/postgresql/1.26.0/docs/resources/grant) | resource |
@@ -95,6 +107,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_databases"></a> [databases](#input\_databases) | Databases to create (key is database name). If empty, no DBs are created. | <pre>map(object({<br/>    template               = optional(string, "template0")<br/>    lc_collate             = optional(string, "en_US.UTF-8")<br/>    connection_limit       = optional(number, -1)<br/>    allow_connections      = optional(bool, true)<br/>    alter_object_ownership = optional(bool, false)<br/>  }))</pre> | `{}` | no |
 | <a name="input_ephemeral_passwords"></a> [ephemeral\_passwords](#input\_ephemeral\_passwords) | If true, generate ephemeral\_password instead of random\_password | `bool` | `false` | no |
+| <a name="input_extensions"></a> [extensions](#input\_extensions) | PostgreSQL extensions to create, with target databases | <pre>map(object({<br/>    databases      = list(string)<br/>    schema         = optional(string)<br/>    version        = optional(string)<br/>    drop_cascade   = optional(bool, false)<br/>    create_cascade = optional(bool, false)<br/>  }))</pre> | `{}` | no |
 | <a name="input_external_passwords"></a> [external\_passwords](#input\_external\_passwords) | If true, do not generate passwords; expect provided\_passwords map | `bool` | `false` | no |
 | <a name="input_passwords_parameters"></a> [passwords\_parameters](#input\_passwords\_parameters) | Parameters for random passwords | <pre>object({<br/>    length  = number<br/>    special = bool<br/>  })</pre> | <pre>{<br/>  "length": 21,<br/>  "special": false<br/>}</pre> | no |
 | <a name="input_provided_passwords"></a> [provided\_passwords](#input\_provided\_passwords) | Optional map of user => password when external\_passwords is true | `map(string)` | `{}` | no |

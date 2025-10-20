@@ -11,6 +11,17 @@ module "postgres_setup" {
     journey   = {}
   }
 
+  extensions = {
+    "uuid-ossp" = {
+      databases = ["adventure"]
+    }
+    "pgcrypto" = {
+      databases      = ["journey"]
+      schema         = "public"
+      create_cascade = true
+    }
+  }
+
   roles = {
     "bill" = {
       database_access               = ["adventure"]
