@@ -36,6 +36,7 @@ module "postgres_setup" {
       grant_privileges_on_schema    = ["USAGE", "CREATE"]
       grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
       grant_privileges_on_sequences = ["USAGE", "SELECT"]
+      foreign_data_wrapper_access   = ["postgres_fdw"]
     }
   }
 }
