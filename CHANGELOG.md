@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.5...v1.0.6) (2025-10-21)
+
+
+### Bug Fixes
+
+* grant for foreign data wrappers ([92a8cd8](https://github.com/anatomiq/terraform-postgres-setup/commit/92a8cd89d648301d5c601bdfc1d42e0b3fceb7d1))
+
 ## [1.0.5](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.4...v1.0.5) (2025-10-20)
 
 
