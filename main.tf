@@ -88,6 +88,7 @@ resource "postgresql_grant" "database" {
         }
       ]
     ]) : "${pair.role_name}_${pair.db_name}" => pair
+    if length(pair.data.grant_privileges_on_database) > 0
   }
 
   database    = each.value.db_name
@@ -113,6 +114,7 @@ resource "postgresql_grant" "schema" {
         }
       ]
     ]) : "${pair.role_name}_${pair.db_name}" => pair
+    if length(pair.data.grant_privileges_on_schema) > 0
   }
 
   database    = each.value.db_name
@@ -122,8 +124,7 @@ resource "postgresql_grant" "schema" {
   schema      = lookup(each.value.data, "schema", "public")
   depends_on = [
     postgresql_role.default,
-    postgresql_database.database,
-    postgresql_grant.database
+    postgresql_database.database
   ]
 }
 
@@ -140,6 +141,7 @@ resource "postgresql_grant" "tables" {
         }
       ]
     ]) : "${pair.role_name}_${pair.db_name}" => pair
+    if length(pair.data.grant_privileges_on_tables) > 0
   }
 
   database    = each.value.db_name
@@ -150,8 +152,7 @@ resource "postgresql_grant" "tables" {
   schema      = lookup(each.value.data, "schema", "public")
   depends_on = [
     postgresql_role.default,
-    postgresql_database.database,
-    postgresql_grant.schema
+    postgresql_database.database
   ]
 }
 
@@ -168,6 +169,7 @@ resource "postgresql_grant" "sequences" {
         }
       ]
     ]) : "${pair.role_name}_${pair.db_name}" => pair
+    if length(pair.data.grant_privileges_on_sequences) > 0
   }
 
   database    = each.value.db_name
@@ -178,8 +180,34 @@ resource "postgresql_grant" "sequences" {
   schema      = lookup(each.value.data, "schema", "public")
   depends_on = [
     postgresql_role.default,
-    postgresql_database.database,
-    postgresql_grant.tables
+    postgresql_database.database
+  ]
+}
+
+#===============================================================
+# Grant Privileges on FDW
+resource "postgresql_grant" "fdw" {
+  for_each = {
+    for pair in flatten([
+      for role_name, role_data in var.roles : [
+        for db_name in role_data.database_access : {
+          role_name = role_name
+          db_name   = db_name
+          data      = role_data
+        }
+      ]
+    ]) : "${pair.role_name}_${pair.db_name}" => pair
+    if length(pair.data.foreign_data_wrapper_access) > 0
+  }
+
+  database    = each.value.db_name
+  role        = postgresql_role.default[each.value.role_name].name
+  privileges  = lookup(each.value.data, "grant_privileges_on_fdw", ["USAGE"])
+  object_type = "foreign_data_wrapper"
+  objects     = each.value.data.foreign_data_wrapper_access
+  depends_on = [
+    postgresql_role.default,
+    postgresql_database.database
   ]
 }
 
@@ -196,7 +224,7 @@ resource "postgresql_default_privileges" "default_tables" {
         }
       ]
     ]) : "${pair.role_name}_${pair.db_name}" => pair
-    if pair.data.set_default_privileges
+    if pair.data.set_default_privileges && length(pair.data.default_privileges_on_tables) > 0
   }
 
   database    = each.value.db_name
@@ -207,11 +235,7 @@ resource "postgresql_default_privileges" "default_tables" {
   owner       = each.value.data.objects_owner_user
   depends_on = [
     postgresql_role.default,
-    postgresql_database.database,
-    postgresql_grant.database,
-    postgresql_grant.schema,
-    postgresql_grant.tables,
-    postgresql_grant.sequences
+    postgresql_database.database
   ]
 }
 
@@ -228,7 +252,7 @@ resource "postgresql_default_privileges" "default_sequences" {
         }
       ]
     ]) : "${pair.role_name}_${pair.db_name}" => pair
-    if pair.data.set_default_privileges
+    if pair.data.set_default_privileges && length(pair.data.default_privileges_on_sequences) > 0
   }
 
   database    = each.value.db_name
@@ -239,11 +263,6 @@ resource "postgresql_default_privileges" "default_sequences" {
   owner       = each.value.data.objects_owner_user
   depends_on = [
     postgresql_role.default,
-    postgresql_database.database,
-    postgresql_grant.database,
-    postgresql_grant.schema,
-    postgresql_grant.tables,
-    postgresql_grant.sequences,
-    postgresql_default_privileges.default_tables
+    postgresql_database.database
   ]
 }
