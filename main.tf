@@ -202,7 +202,7 @@ resource "postgresql_grant" "fdw" {
 
   database    = each.value.db_name
   role        = postgresql_role.default[each.value.role_name].name
-  privileges  = lookup(each.value.data, "grant_privileges_on_fdw", ["USAGE"])
+  privileges  = ["USAGE"]
   object_type = "foreign_data_wrapper"
   objects     = each.value.data.foreign_data_wrapper_access
   depends_on = [
