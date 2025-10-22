@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.6...v1.0.7) (2025-10-22)
+
+
+### Bug Fixes
+
+* adding default USAGE privileges for fdw ([36816c0](https://github.com/anatomiq/terraform-postgres-setup/commit/36816c076e23ccc67d465e05c1cc1c82ac3a0a6a))
+
 ## [1.0.6](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.5...v1.0.6) (2025-10-21)
 
 
