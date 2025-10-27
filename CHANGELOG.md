@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.7...v1.1.0) (2025-10-27)
+
+
+### Features
+
+* **privileges:** Fix example ([5fb1edc](https://github.com/anatomiq/terraform-postgres-setup/commit/5fb1edc955ddef0981249a9a8e2be1cbd4b7a249))
+* **privileges:** Refactoring default privileges ([8feca29](https://github.com/anatomiq/terraform-postgres-setup/commit/8feca297eda52a13e3749f3188e48bbe5de07e41))
+* **privileges:** Remove schema ([beb1fb9](https://github.com/anatomiq/terraform-postgres-setup/commit/beb1fb9ee983859dc427f8055f665dba3131c56c))
+
 ## [1.0.7](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.6...v1.0.7) (2025-10-22)
 
 
