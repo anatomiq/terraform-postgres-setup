@@ -22,6 +22,23 @@ module "postgres_setup" {
     }
   }
 
+  set_default_privileges = {
+    "adventure" = {
+      schema             = "public"
+      objects_owner_user = "bill"
+      roles = {
+        bill = {
+          default_privileges_on_tables    = ["SELECT"]
+          default_privileges_on_sequences = ["USAGE", "SELECT"]
+        }
+        tedd = {
+          default_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE"]
+          default_privileges_on_sequences = ["USAGE", "SELECT"]
+        }
+      }
+    }
+  }
+
   roles = {
     "bill" = {
       database_access               = ["adventure"]
