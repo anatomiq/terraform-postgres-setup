@@ -1,25 +1,20 @@
 variable "roles" {
   description = "Set of roles to create; each can target one or more databases"
   type = map(object({
-    login                           = optional(bool, true)
-    password                        = optional(bool, true)
-    password_version                = optional(number, 1)
-    grant_roles                     = optional(list(string), [])
-    database_access                 = list(string)
-    grant_privileges_on_database    = optional(list(string), [])
-    grant_privileges_on_schema      = optional(list(string), [])
-    grant_privileges_on_tables      = optional(list(string), [])
-    tables                          = optional(list(string), [])
-    grant_privileges_on_sequences   = optional(list(string), [])
-    sequences                       = optional(list(string), [])
-    grant_privileges_on_fdw         = optional(list(string), [])
-    foreign_data_wrapper_access     = optional(list(string), [])
-    set_default_privileges          = optional(bool, false)
-    default_privileges_on_tables    = optional(list(string), [])
-    default_privileges_on_sequences = optional(list(string), [])
-    default_privileges_on_fdw       = optional(list(string), [])
-    schema                          = optional(string, "public")
-    objects_owner_user              = optional(string, "postgres")
+    login                         = optional(bool, true)
+    password                      = optional(bool, true)
+    password_version              = optional(number, 1)
+    grant_roles                   = optional(list(string), [])
+    database_access               = list(string)
+    grant_privileges_on_database  = optional(list(string), [])
+    grant_privileges_on_schema    = optional(list(string), [])
+    grant_privileges_on_tables    = optional(list(string), [])
+    tables                        = optional(list(string), [])
+    grant_privileges_on_sequences = optional(list(string), [])
+    sequences                     = optional(list(string), [])
+    grant_privileges_on_fdw       = optional(list(string), [])
+    foreign_data_wrapper_access   = optional(list(string), [])
+    schema                        = optional(string, "public")
   }))
 }
 
@@ -31,6 +26,22 @@ variable "databases" {
     connection_limit       = optional(number, -1)
     allow_connections      = optional(bool, true)
     alter_object_ownership = optional(bool, false)
+  }))
+  default = {}
+}
+
+variable "set_default_privileges" {
+  description = "Default privileges to apply per database and schema, with per-role customization"
+  type = map(object({
+    schema             = optional(string, "public")
+    objects_owner_user = optional(string, "postgres")
+    roles = map(object({
+      default_privileges_on_tables    = optional(list(string), [])
+      default_privileges_on_sequences = optional(list(string), [])
+      default_privileges_on_functions = optional(list(string), [])
+      default_privileges_on_types     = optional(list(string), [])
+      default_privileges_on_schemas   = optional(list(string), [])
+    }))
   }))
   default = {}
 }
