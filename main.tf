@@ -357,7 +357,6 @@ resource "postgresql_default_privileges" "db_schemas" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.role_cfg.default_privileges_on_schemas
   object_type = "schema"
-  schema      = lookup(each.value.db_cfg, "schema", "public")
   owner       = lookup(each.value.db_cfg, "objects_owner_user", "postgres")
 
   depends_on = [
