@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.1.0...v1.2.0) (2026-02-10)
+
+
+### Features
+
+* **postgres:** multiple schemas definition ([190e320](https://github.com/anatomiq/terraform-postgres-setup/commit/190e32061335e0873231747886b247f1a3a0967f))
+
 ## [1.1.0](https://github.com/anatomiq/terraform-postgres-setup/compare/v1.0.7...v1.1.0) (2025-10-27)
 
 
