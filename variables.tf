@@ -5,7 +5,7 @@ variable "roles" {
     password                      = optional(bool, true)
     password_version              = optional(number, 1)
     grant_roles                   = optional(list(string), [])
-    database_access               = list(string)
+    database_access               = map(list(string))
     grant_privileges_on_database  = optional(list(string), [])
     grant_privileges_on_schema    = optional(list(string), [])
     grant_privileges_on_tables    = optional(list(string), [])
@@ -14,7 +14,6 @@ variable "roles" {
     sequences                     = optional(list(string), [])
     grant_privileges_on_fdw       = optional(list(string), [])
     foreign_data_wrapper_access   = optional(list(string), [])
-    schema                        = optional(string, "public")
   }))
 }
 
@@ -33,9 +32,9 @@ variable "databases" {
 variable "set_default_privileges" {
   description = "Default privileges to apply per database and schema, with per-role customization"
   type = map(object({
-    schema             = optional(string, "public")
     objects_owner_user = optional(string, "postgres")
     roles = map(object({
+      schemas                         = optional(list(string), ["public"])
       default_privileges_on_tables    = optional(list(string), [])
       default_privileges_on_sequences = optional(list(string), [])
       default_privileges_on_functions = optional(list(string), [])
@@ -49,8 +48,7 @@ variable "set_default_privileges" {
 variable "extensions" {
   description = "PostgreSQL extensions to create, with target databases"
   type = map(object({
-    databases      = list(string)
-    schema         = optional(string)
+    databases      = map(string)
     version        = optional(string)
     drop_cascade   = optional(bool, false)
     create_cascade = optional(bool, false)

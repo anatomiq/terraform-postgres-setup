@@ -9,6 +9,7 @@ output "role_passwords" {
 output "role_databases" {
   description = "Databases list per role"
   value = {
-    for role_name, role_data in var.roles : role_name => role_data.database_access
+    for role_name, role_data in var.roles :
+    role_name => keys(role_data.database_access)
   }
 }

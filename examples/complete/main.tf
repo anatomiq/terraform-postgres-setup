@@ -13,27 +13,28 @@ module "postgres_setup" {
 
   extensions = {
     "uuid-ossp" = {
-      databases = ["adventure"]
+      databases = {
+        "adventure" = "public"
+      }
     }
     "pgcrypto" = {
-      databases      = ["journey"]
-      schema         = "public"
+      databases = {
+        "journey" = "public"
+      }
       create_cascade = true
     }
   }
 
   set_default_privileges = {
     "adventure" = {
-      schema             = "public"
       objects_owner_user = "bill"
       roles = {
         bill = {
-          default_privileges_on_tables    = ["SELECT"]
-          default_privileges_on_sequences = ["USAGE", "SELECT"]
+          default_privileges_on_tables = ["SELECT"]
         }
         tedd = {
-          default_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE"]
-          default_privileges_on_sequences = ["USAGE", "SELECT"]
+          schemas                      = ["public", "custom"]
+          default_privileges_on_tables = ["SELECT", "INSERT", "UPDATE", "DELETE"]
         }
       }
     }
@@ -41,14 +42,19 @@ module "postgres_setup" {
 
   roles = {
     "bill" = {
-      database_access               = ["adventure"]
+      database_access = {
+        "adventure" = ["public"]
+      }
       grant_privileges_on_database  = ["CONNECT", "CREATE"]
       grant_privileges_on_schema    = ["USAGE", "CREATE"]
       grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
       grant_privileges_on_sequences = ["USAGE", "SELECT"]
     }
     "ted" = {
-      database_access               = ["adventure", "journey"]
+      database_access = {
+        "adventure" = ["public"]
+        "journey"   = ["public"]
+      }
       grant_privileges_on_database  = ["CONNECT", "CREATE"]
       grant_privileges_on_schema    = ["USAGE", "CREATE"]
       grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]

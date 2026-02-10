@@ -21,29 +21,53 @@ module "[module_name]" {
 
   extensions = {
     "uuid-ossp" = {
-      databases = ["adventure"]
+      databases = {
+        "adventure" = "public"
+      }
     }
     "pgcrypto" = {
-      databases       = ["journey"]
-      schema          = "public"
-      create_cascade  = true
+      databases      = {
+        "journey" = "public"
+      }
+      create_cascade = true
+    }
+  }
+
+  set_default_privileges = {
+    "adventure" = {
+      objects_owner_user = "bill"
+      roles = {
+        bill = {
+          default_privileges_on_tables = ["SELECT"]
+        }
+        tedd = {
+          schemas                      = ["public", "custom"]
+          default_privileges_on_tables = ["SELECT", "INSERT", "UPDATE", "DELETE"]
+        }
+      }
     }
   }
 
   roles = {
     "bill" = {
-      database_access               = ["adventure"]
+      database_access              = {
+        "adventure" = ["public"]
+      }
       grant_privileges_on_database  = ["CONNECT", "CREATE"]
       grant_privileges_on_schema    = ["USAGE", "CREATE"]
       grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
       grant_privileges_on_sequences = ["USAGE", "SELECT"]
     }
     "ted" = {
-      database_access               = ["adventure", "journey"]
+      database_access              = {
+        "adventure" = ["public"]
+        "journey" = ["public"]
+      }
       grant_privileges_on_database  = ["CONNECT", "CREATE"]
       grant_privileges_on_schema    = ["USAGE", "CREATE"]
       grant_privileges_on_tables    = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
       grant_privileges_on_sequences = ["USAGE", "SELECT"]
+      foreign_data_wrapper_access   = ["postgres_fdw"]
     }
   }
 }
@@ -111,12 +135,12 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_databases"></a> [databases](#input\_databases) | Databases to create (key is database name). If empty, no DBs are created. | <pre>map(object({<br/>    template               = optional(string, "template0")<br/>    lc_collate             = optional(string, "en_US.UTF-8")<br/>    connection_limit       = optional(number, -1)<br/>    allow_connections      = optional(bool, true)<br/>    alter_object_ownership = optional(bool, false)<br/>  }))</pre> | `{}` | no |
 | <a name="input_ephemeral_passwords"></a> [ephemeral\_passwords](#input\_ephemeral\_passwords) | If true, generate ephemeral\_password instead of random\_password | `bool` | `false` | no |
-| <a name="input_extensions"></a> [extensions](#input\_extensions) | PostgreSQL extensions to create, with target databases | <pre>map(object({<br/>    databases      = list(string)<br/>    schema         = optional(string)<br/>    version        = optional(string)<br/>    drop_cascade   = optional(bool, false)<br/>    create_cascade = optional(bool, false)<br/>  }))</pre> | `{}` | no |
+| <a name="input_extensions"></a> [extensions](#input\_extensions) | PostgreSQL extensions to create, with target databases | <pre>map(object({<br/>    databases      = map(string)<br/>    version        = optional(string)<br/>    drop_cascade   = optional(bool, false)<br/>    create_cascade = optional(bool, false)<br/>  }))</pre> | `{}` | no |
 | <a name="input_external_passwords"></a> [external\_passwords](#input\_external\_passwords) | If true, do not generate passwords; expect provided\_passwords map | `bool` | `false` | no |
 | <a name="input_passwords_parameters"></a> [passwords\_parameters](#input\_passwords\_parameters) | Parameters for random passwords | <pre>object({<br/>    length  = number<br/>    special = bool<br/>  })</pre> | <pre>{<br/>  "length": 21,<br/>  "special": false<br/>}</pre> | no |
 | <a name="input_provided_passwords"></a> [provided\_passwords](#input\_provided\_passwords) | Optional map of user => password when external\_passwords is true | `map(string)` | `{}` | no |
-| <a name="input_roles"></a> [roles](#input\_roles) | Set of roles to create; each can target one or more databases | <pre>map(object({<br/>    login                         = optional(bool, true)<br/>    password                      = optional(bool, true)<br/>    password_version              = optional(number, 1)<br/>    grant_roles                   = optional(list(string), [])<br/>    database_access               = list(string)<br/>    grant_privileges_on_database  = optional(list(string), [])<br/>    grant_privileges_on_schema    = optional(list(string), [])<br/>    grant_privileges_on_tables    = optional(list(string), [])<br/>    tables                        = optional(list(string), [])<br/>    grant_privileges_on_sequences = optional(list(string), [])<br/>    sequences                     = optional(list(string), [])<br/>    grant_privileges_on_fdw       = optional(list(string), [])<br/>    foreign_data_wrapper_access   = optional(list(string), [])<br/>    schema                        = optional(string, "public")<br/>  }))</pre> | n/a | yes |
-| <a name="input_set_default_privileges"></a> [set\_default\_privileges](#input\_set\_default\_privileges) | Default privileges to apply per database and schema, with per-role customization | <pre>map(object({<br/>    schema             = optional(string, "public")<br/>    objects_owner_user = optional(string, "postgres")<br/>    roles = map(object({<br/>      default_privileges_on_tables    = optional(list(string), [])<br/>      default_privileges_on_sequences = optional(list(string), [])<br/>      default_privileges_on_functions = optional(list(string), [])<br/>      default_privileges_on_types     = optional(list(string), [])<br/>      default_privileges_on_schemas   = optional(list(string), [])<br/>    }))<br/>  }))</pre> | `{}` | no |
+| <a name="input_roles"></a> [roles](#input\_roles) | Set of roles to create; each can target one or more databases | <pre>map(object({<br/>    login                         = optional(bool, true)<br/>    password                      = optional(bool, true)<br/>    password_version              = optional(number, 1)<br/>    grant_roles                   = optional(list(string), [])<br/>    database_access               = map(list(string))<br/>    grant_privileges_on_database  = optional(list(string), [])<br/>    grant_privileges_on_schema    = optional(list(string), [])<br/>    grant_privileges_on_tables    = optional(list(string), [])<br/>    tables                        = optional(list(string), [])<br/>    grant_privileges_on_sequences = optional(list(string), [])<br/>    sequences                     = optional(list(string), [])<br/>    grant_privileges_on_fdw       = optional(list(string), [])<br/>    foreign_data_wrapper_access   = optional(list(string), [])<br/>  }))</pre> | n/a | yes |
+| <a name="input_set_default_privileges"></a> [set\_default\_privileges](#input\_set\_default\_privileges) | Default privileges to apply per database and schema, with per-role customization | <pre>map(object({<br/>    objects_owner_user = optional(string, "postgres")<br/>    roles = map(object({<br/>      schemas                         = optional(list(string), ["public"])<br/>      default_privileges_on_tables    = optional(list(string), [])<br/>      default_privileges_on_sequences = optional(list(string), [])<br/>      default_privileges_on_functions = optional(list(string), [])<br/>      default_privileges_on_types     = optional(list(string), [])<br/>      default_privileges_on_schemas   = optional(list(string), [])<br/>    }))<br/>  }))</pre> | `{}` | no |
 
 ## Outputs
 

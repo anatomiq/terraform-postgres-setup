@@ -16,10 +16,11 @@ resource "postgresql_extension" "extensions" {
   for_each = {
     for pair in flatten([
       for ext_name, ext_conf in var.extensions : [
-        for db_name in ext_conf.databases : {
-          ext_name = ext_name
-          db_name  = db_name
-          conf     = ext_conf
+        for db_name, schema_name in ext_conf.databases : {
+          ext_name    = ext_name
+          db_name     = db_name
+          schema_name = schema_name
+          conf        = ext_conf
         }
       ]
     ]) : "${pair.db_name}_${pair.ext_name}" => pair
@@ -27,12 +28,14 @@ resource "postgresql_extension" "extensions" {
 
   name           = each.value.ext_name
   database       = each.value.db_name
-  schema         = lookup(each.value.conf, "schema", null)
-  version        = lookup(each.value.conf, "version", null)
-  drop_cascade   = lookup(each.value.conf, "drop_cascade", false)
-  create_cascade = lookup(each.value.conf, "create_cascade", false)
+  schema         = each.value.schema_name
+  version        = each.value.conf.version
+  drop_cascade   = each.value.conf.drop_cascade
+  create_cascade = each.value.conf.create_cascade
 
-  depends_on = [postgresql_database.database]
+  depends_on = [
+    postgresql_database.database
+  ]
 }
 
 #===============================================================
@@ -81,7 +84,7 @@ resource "postgresql_grant" "database" {
   for_each = {
     for pair in flatten([
       for role_name, role_data in var.roles : [
-        for db_name in role_data.database_access : {
+        for db_name, schemas in role_data.database_access : {
           role_name = role_name
           db_name   = db_name
           data      = role_data
@@ -95,6 +98,7 @@ resource "postgresql_grant" "database" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.data.grant_privileges_on_database
   object_type = "database"
+
   depends_on = [
     postgresql_role.default,
     postgresql_database.database
@@ -107,13 +111,16 @@ resource "postgresql_grant" "schema" {
   for_each = {
     for pair in flatten([
       for role_name, role_data in var.roles : [
-        for db_name in role_data.database_access : {
-          role_name = role_name
-          db_name   = db_name
-          data      = role_data
-        }
+        for db_name, schemas in role_data.database_access : [
+          for schema_name in schemas : {
+            role_name   = role_name
+            db_name     = db_name
+            schema_name = schema_name
+            data        = role_data
+          }
+        ]
       ]
-    ]) : "${pair.role_name}_${pair.db_name}" => pair
+    ]) : "${pair.role_name}_${pair.db_name}_${pair.schema_name}" => pair
     if length(pair.data.grant_privileges_on_schema) > 0
   }
 
@@ -121,7 +128,8 @@ resource "postgresql_grant" "schema" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.data.grant_privileges_on_schema
   object_type = "schema"
-  schema      = lookup(each.value.data, "schema", "public")
+  schema      = each.value.schema_name
+
   depends_on = [
     postgresql_role.default,
     postgresql_database.database
@@ -134,13 +142,16 @@ resource "postgresql_grant" "tables" {
   for_each = {
     for pair in flatten([
       for role_name, role_data in var.roles : [
-        for db_name in role_data.database_access : {
-          role_name = role_name
-          db_name   = db_name
-          data      = role_data
-        }
+        for db_name, schemas in role_data.database_access : [
+          for schema_name in schemas : {
+            role_name   = role_name
+            db_name     = db_name
+            schema_name = schema_name
+            data        = role_data
+          }
+        ]
       ]
-    ]) : "${pair.role_name}_${pair.db_name}" => pair
+    ]) : "${pair.role_name}_${pair.db_name}_${pair.schema_name}" => pair
     if length(pair.data.grant_privileges_on_tables) > 0
   }
 
@@ -148,8 +159,9 @@ resource "postgresql_grant" "tables" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.data.grant_privileges_on_tables
   object_type = "table"
-  objects     = lookup(each.value.data, "tables", [])
-  schema      = lookup(each.value.data, "schema", "public")
+  objects     = each.value.data.tables
+  schema      = each.value.schema_name
+
   depends_on = [
     postgresql_role.default,
     postgresql_database.database
@@ -162,13 +174,16 @@ resource "postgresql_grant" "sequences" {
   for_each = {
     for pair in flatten([
       for role_name, role_data in var.roles : [
-        for db_name in role_data.database_access : {
-          role_name = role_name
-          db_name   = db_name
-          data      = role_data
-        }
+        for db_name, schemas in role_data.database_access : [
+          for schema_name in schemas : {
+            role_name   = role_name
+            db_name     = db_name
+            schema_name = schema_name
+            data        = role_data
+          }
+        ]
       ]
-    ]) : "${pair.role_name}_${pair.db_name}" => pair
+    ]) : "${pair.role_name}_${pair.db_name}_${pair.schema_name}" => pair
     if length(pair.data.grant_privileges_on_sequences) > 0
   }
 
@@ -176,8 +191,9 @@ resource "postgresql_grant" "sequences" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.data.grant_privileges_on_sequences
   object_type = "sequence"
-  objects     = lookup(each.value.data, "sequences", [])
-  schema      = lookup(each.value.data, "schema", "public")
+  objects     = each.value.data.sequences
+  schema      = each.value.schema_name
+
   depends_on = [
     postgresql_role.default,
     postgresql_database.database
@@ -190,7 +206,7 @@ resource "postgresql_grant" "fdw" {
   for_each = {
     for pair in flatten([
       for role_name, role_data in var.roles : [
-        for db_name in role_data.database_access : {
+        for db_name, schemas in role_data.database_access : {
           role_name = role_name
           db_name   = db_name
           data      = role_data
@@ -205,6 +221,7 @@ resource "postgresql_grant" "fdw" {
   privileges  = ["USAGE"]
   object_type = "foreign_data_wrapper"
   objects     = each.value.data.foreign_data_wrapper_access
+
   depends_on = [
     postgresql_role.default,
     postgresql_database.database
@@ -217,13 +234,16 @@ resource "postgresql_default_privileges" "db_tables" {
   for_each = {
     for pair in flatten([
       for db_name, db_cfg in var.set_default_privileges : [
-        for role_name, role_cfg in db_cfg.roles : {
-          key       = "${db_name}_${role_name}_tables"
-          db_name   = db_name
-          role_name = role_name
-          db_cfg    = db_cfg
-          role_cfg  = role_cfg
-        }
+        for role_name, role_cfg in db_cfg.roles : [
+          for schema_name in role_cfg.schemas : {
+            key         = "${db_name}_${role_name}_${schema_name}_tables"
+            db_name     = db_name
+            role_name   = role_name
+            schema_name = schema_name
+            db_cfg      = db_cfg
+            role_cfg    = role_cfg
+          }
+        ]
       ]
     ]) : pair.key => pair
     if length(pair.role_cfg.default_privileges_on_tables) > 0
@@ -233,8 +253,8 @@ resource "postgresql_default_privileges" "db_tables" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.role_cfg.default_privileges_on_tables
   object_type = "table"
-  schema      = lookup(each.value.db_cfg, "schema", "public")
-  owner       = lookup(each.value.db_cfg, "objects_owner_user", "postgres")
+  schema      = each.value.schema_name
+  owner       = each.value.db_cfg.objects_owner_user
 
   depends_on = [
     postgresql_role.default,
@@ -248,13 +268,16 @@ resource "postgresql_default_privileges" "db_sequences" {
   for_each = {
     for pair in flatten([
       for db_name, db_cfg in var.set_default_privileges : [
-        for role_name, role_cfg in db_cfg.roles : {
-          key       = "${db_name}_${role_name}_sequences"
-          db_name   = db_name
-          role_name = role_name
-          db_cfg    = db_cfg
-          role_cfg  = role_cfg
-        }
+        for role_name, role_cfg in db_cfg.roles : [
+          for schema_name in role_cfg.schemas : {
+            key         = "${db_name}_${role_name}_${schema_name}_sequences"
+            db_name     = db_name
+            role_name   = role_name
+            schema_name = schema_name
+            db_cfg      = db_cfg
+            role_cfg    = role_cfg
+          }
+        ]
       ]
     ]) : pair.key => pair
     if length(pair.role_cfg.default_privileges_on_sequences) > 0
@@ -264,8 +287,8 @@ resource "postgresql_default_privileges" "db_sequences" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.role_cfg.default_privileges_on_sequences
   object_type = "sequence"
-  schema      = lookup(each.value.db_cfg, "schema", "public")
-  owner       = lookup(each.value.db_cfg, "objects_owner_user", "postgres")
+  schema      = each.value.schema_name
+  owner       = each.value.db_cfg.objects_owner_user
 
   depends_on = [
     postgresql_role.default,
@@ -279,13 +302,16 @@ resource "postgresql_default_privileges" "db_functions" {
   for_each = {
     for pair in flatten([
       for db_name, db_cfg in var.set_default_privileges : [
-        for role_name, role_cfg in db_cfg.roles : {
-          key       = "${db_name}_${role_name}_functions"
-          db_name   = db_name
-          role_name = role_name
-          db_cfg    = db_cfg
-          role_cfg  = role_cfg
-        }
+        for role_name, role_cfg in db_cfg.roles : [
+          for schema_name in role_cfg.schemas : {
+            key         = "${db_name}_${role_name}_${schema_name}_functions"
+            db_name     = db_name
+            role_name   = role_name
+            schema_name = schema_name
+            db_cfg      = db_cfg
+            role_cfg    = role_cfg
+          }
+        ]
       ]
     ]) : pair.key => pair
     if length(pair.role_cfg.default_privileges_on_functions) > 0
@@ -295,8 +321,8 @@ resource "postgresql_default_privileges" "db_functions" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.role_cfg.default_privileges_on_functions
   object_type = "function"
-  schema      = lookup(each.value.db_cfg, "schema", "public")
-  owner       = lookup(each.value.db_cfg, "objects_owner_user", "postgres")
+  schema      = each.value.schema_name
+  owner       = each.value.db_cfg.objects_owner_user
 
   depends_on = [
     postgresql_role.default,
@@ -310,13 +336,16 @@ resource "postgresql_default_privileges" "db_types" {
   for_each = {
     for pair in flatten([
       for db_name, db_cfg in var.set_default_privileges : [
-        for role_name, role_cfg in db_cfg.roles : {
-          key       = "${db_name}_${role_name}_types"
-          db_name   = db_name
-          role_name = role_name
-          db_cfg    = db_cfg
-          role_cfg  = role_cfg
-        }
+        for role_name, role_cfg in db_cfg.roles : [
+          for schema_name in role_cfg.schemas : {
+            key         = "${db_name}_${role_name}_${schema_name}_types"
+            db_name     = db_name
+            role_name   = role_name
+            schema_name = schema_name
+            db_cfg      = db_cfg
+            role_cfg    = role_cfg
+          }
+        ]
       ]
     ]) : pair.key => pair
     if length(pair.role_cfg.default_privileges_on_types) > 0
@@ -326,8 +355,8 @@ resource "postgresql_default_privileges" "db_types" {
   role        = postgresql_role.default[each.value.role_name].name
   privileges  = each.value.role_cfg.default_privileges_on_types
   object_type = "type"
-  schema      = lookup(each.value.db_cfg, "schema", "public")
-  owner       = lookup(each.value.db_cfg, "objects_owner_user", "postgres")
+  schema      = each.value.schema_name
+  owner       = each.value.db_cfg.objects_owner_user
 
   depends_on = [
     postgresql_role.default,
